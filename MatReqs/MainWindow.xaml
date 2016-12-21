@@ -33,7 +33,7 @@
         <Label x:Name="lbl_InputAmountOfItems" Content="Amount of the selected item" HorizontalAlignment="Left" 
                Margin="331,21,0,0" VerticalAlignment="Top"/>
         <ListBox x:Name="listBox_CalculatedResult" HorizontalAlignment="Left" Height="201" Margin="20,285,0,-17" 
-                 VerticalAlignment="Top" Width="300" HorizontalContentAlignment="Stretch" SelectionChanged="listBox_CalculatedResult_SelectionChanged">
+                 VerticalAlignment="Top" Width="300" HorizontalContentAlignment="Stretch">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="0,2">
