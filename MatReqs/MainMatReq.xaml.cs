@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace MatReqs
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainMatReq.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainMatReq : Window
     {
         private List<RecipeItem> _recipes = new List<RecipeItem>();
         private List<BasicItem> _basicItems = new List<BasicItem>();
         private List<Machine> _machines = new List<Machine>();
         private int _amountOfItemToCalculate = 0;
 
-        public MainWindow()
+        public MainMatReq()
         {
             InitializeComponent();
             InitMatReqs();
@@ -32,16 +33,18 @@ namespace MatReqs
         {
             List<CalculatedItem> returnedItems = new List<CalculatedItem>();
 
-            // Grab input value
-            _amountOfItemToCalculate = int.Parse(txt_InputAmountOfItems.Text);
-            
+            // Grab input value - We're only expecting ints in the textbox
+            string inputTxt = txt_InputAmountOfItems.Text;
+            inputTxt = RemoveWhitespace(inputTxt);
+            _amountOfItemToCalculate = int.Parse(inputTxt);
+
             // Fill our list with the correct items for exactly one recipe
             returnedItems.AddRange(_recipes.Find(recipe => recipe.Title == "Redstone Chipset").ReturnListOfItems());
 
             // Calculate resulting amounts based on multiplier _amountOfItemToCalculate
             if (_amountOfItemToCalculate > 0)
             {
-                foreach(CalculatedItem recipe in returnedItems)
+                foreach (CalculatedItem recipe in returnedItems)
                 {
                     recipe.Amount = recipe.Amount * _amountOfItemToCalculate;
                 }
@@ -86,6 +89,13 @@ namespace MatReqs
             Regex regex = new Regex("[^0-9]+");
             e.Handled = regex.IsMatch(e.Text);
         }
+
+        private string RemoveWhitespace(string input)
+        {
+            return new string(input.ToCharArray()
+                .Where(c => !Char.IsWhiteSpace(c))
+                .ToArray());
+        }
     }
 
     #region Item Classes
@@ -121,7 +131,7 @@ namespace MatReqs
         public List<CalculatedItem> ReturnListOfItems()
         {
             List<CalculatedItem> resultingList = new List<CalculatedItem>();
-            
+
             foreach (KeyValuePair<BasicItem, int> pair in ItemsRequired)
             {
                 BasicItem item = pair.Key;
@@ -134,14 +144,14 @@ namespace MatReqs
 
                 resultingList.Add(newItem);
             }
-            
+
             return resultingList;
         }
 
         public string ReturnMiscInfo(int amountOfItems)
         {
             string resultingString = "";
-            
+
             resultingString += string.Format("Machines Required: " + (RequiresMachines ? "Yes" : "No"));
 
             if (RequiresMachines)
@@ -152,14 +162,13 @@ namespace MatReqs
                 {
                     resultingString += string.Format("\n" + m.Title);
                 }
-                
+
                 resultingString += string.Format("\n\nTotal RF required: {0:0,0}", amountOfItems > 1 ? RFRequired * amountOfItems : RFRequired);
             }
-            
+
             return resultingString;
         }
     }
-
     public class BasicItem
     {
         public string Title { get; set; }
@@ -173,14 +182,12 @@ namespace MatReqs
             ItemId = newID;
         }
     }
-    
     public class CalculatedItem
     {
         public string Title { get; set; }
         public int Amount { get; set; }
         public bool InInventory { get; set; }
     }
-
     public class Machine
     {
         public string Title { get; set; }
