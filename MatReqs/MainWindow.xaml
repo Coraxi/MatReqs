@@ -9,27 +9,13 @@
     <Grid Margin="0,0,0,0">
         <ListBox x:Name="listBox_AvailableItems" HorizontalAlignment="Left" Height="200" Margin="20,20,0,0" 
                  VerticalAlignment="Top" Width="300">
-            <ListBoxItem>Test 1</ListBoxItem>
-            <ListBoxItem>Test 2</ListBoxItem>
-            <ListBoxItem>Test 3</ListBoxItem>
-            <ListBoxItem>Test 4</ListBoxItem>
-            <ListBoxItem>Test 5</ListBoxItem>
-            <ListBoxItem>Test 6</ListBoxItem>
-            <ListBoxItem>Test 7</ListBoxItem>
-            <ListBoxItem>Test 8</ListBoxItem>
-            <ListBoxItem>Test 9</ListBoxItem>
-            <ListBoxItem>Test 10</ListBoxItem>
-            <ListBoxItem>Test 11</ListBoxItem>
-            <ListBoxItem>Test 12</ListBoxItem>
-            <ListBoxItem>Test 13</ListBoxItem>
-            <ListBoxItem>Test 14</ListBoxItem>
         </ListBox>
-
 
         <Button x:Name="btn_Calculate" Content="Calculate" HorizontalAlignment="Left" Margin="325,170,0,0" 
                 VerticalAlignment="Top" Width="182" Height="50" Click="btn_Calculate_Click" />
         <TextBox x:Name="txt_InputAmountOfItems" HorizontalAlignment="Left" Height="23" Margin="352,47,0,0" 
-                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120" ToolTip="Enter how many of the selected item you want to create."/>
+                 TextWrapping="Wrap" VerticalAlignment="Top" Width="120" ToolTip="Enter how many of the selected item you want to create."
+                 PreviewTextInput="txt_InputAmountOfItems_PreviewTextInput" />
         <Label x:Name="lbl_InputAmountOfItems" Content="Amount of the selected item" HorizontalAlignment="Left" 
                Margin="331,21,0,0" VerticalAlignment="Top"/>
         <ListBox x:Name="listBox_CalculatedResult" HorizontalAlignment="Left" Height="201" Margin="20,285,0,-17" 

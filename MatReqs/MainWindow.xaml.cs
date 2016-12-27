@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Windows;
 
 namespace MatReqs
@@ -8,24 +10,46 @@ namespace MatReqs
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<CalculatedItem> _resultingItems = new List<CalculatedItem>();
         private List<RecipeItem> _recipes = new List<RecipeItem>();
         private List<BasicItem> _basicItems = new List<BasicItem>();
         private List<Machine> _machines = new List<Machine>();
+        private int _amountOfItemToCalculate = 0;
 
         public MainWindow()
         {
             InitializeComponent();
+            InitMatReqs();
 
             FillUpLists();
         }
 
+        private void InitMatReqs()
+        {
+            txt_InputAmountOfItems.Text = _amountOfItemToCalculate.ToString();
+        }
+
         private void btn_Calculate_Click(object sender, RoutedEventArgs e)
         {
-            _resultingItems.AddRange(_recipes.Find(reci => reci.Title == "Redstone Chipset").ReturnListOfItems());
-            txtBlock_MiscValues.Text = _recipes.Find(reci => reci.Title == "Redstone Chipset").ReturnMiscInfo();
+            List<CalculatedItem> returnedItems = new List<CalculatedItem>();
 
-            listBox_CalculatedResult.ItemsSource = _resultingItems;
+            // Grab input value
+            _amountOfItemToCalculate = int.Parse(txt_InputAmountOfItems.Text);
+            
+            // Fill our list with the correct items for exactly one recipe
+            returnedItems.AddRange(_recipes.Find(recipe => recipe.Title == "Redstone Chipset").ReturnListOfItems());
+
+            // Calculate resulting amounts based on multiplier _amountOfItemToCalculate
+            if (_amountOfItemToCalculate > 0)
+            {
+                foreach(CalculatedItem recipe in returnedItems)
+                {
+                    recipe.Amount = recipe.Amount * _amountOfItemToCalculate;
+                }
+            }
+
+            txtBlock_MiscValues.Text = _recipes.Find(reci => reci.Title == "Redstone Chipset").ReturnMiscInfo(_amountOfItemToCalculate);
+
+            listBox_CalculatedResult.ItemsSource = returnedItems;
         }
 
         private void FillUpLists()
@@ -54,6 +78,13 @@ namespace MatReqs
         private void FillUpMachineList()
         {
             _machines.Add(new Machine("Assembly Table", MachineIds.AssemblyTable, Mod.BCSilicon));
+        }
+
+        private void txt_InputAmountOfItems_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
+        {
+            // Makes sure only integers are accepted
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 
@@ -90,7 +121,7 @@ namespace MatReqs
         public List<CalculatedItem> ReturnListOfItems()
         {
             List<CalculatedItem> resultingList = new List<CalculatedItem>();
-
+            
             foreach (KeyValuePair<BasicItem, int> pair in ItemsRequired)
             {
                 BasicItem item = pair.Key;
@@ -107,10 +138,10 @@ namespace MatReqs
             return resultingList;
         }
 
-        public string ReturnMiscInfo()
+        public string ReturnMiscInfo(int amountOfItems)
         {
             string resultingString = "";
-
+            
             resultingString += string.Format("Machines Required: " + (RequiresMachines ? "Yes" : "No"));
 
             if (RequiresMachines)
@@ -122,7 +153,7 @@ namespace MatReqs
                     resultingString += string.Format("\n" + m.Title);
                 }
                 
-                resultingString += string.Format("\n\nTotal RF required: {0:0,0}", RFRequired);
+                resultingString += string.Format("\n\nTotal RF required: {0:0,0}", amountOfItems > 1 ? RFRequired * amountOfItems : RFRequired);
             }
             
             return resultingString;
